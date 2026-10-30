@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شراء | خيرات زمان</title>
+<script>(function(){try{var t=localStorage.getItem('kz_theme');if(t!=='dark'&&t!=='light'){t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="buy">
+<header id="site-header"></header>
+<div class="page-head"><div class="container"><h1>إتمام الطلب</h1></div></div>
+
+<main class="section">
+  <div class="container" id="buy-main">
+    <div class="checkout">
+
+      <!-- اليمين: بيانات العميل والدفع -->
+      <section class="card pay">
+        <h2>بيانات التوصيل</h2>
+        <form id="order-form" novalidate>
+          <div class="field"><label for="name">الاسم بالكامل</label><input id="name" name="name" autocomplete="name" required></div>
+          <div class="field"><label for="phone">رقم التليفون</label><input id="phone" name="phone" type="tel" dir="ltr" autocomplete="tel" placeholder="05xxxxxxxx" required></div>
+          <div class="field"><label for="address">العنوان بالتفصيل</label><textarea id="address" name="address" autocomplete="street-address" placeholder="المدينة، الحي، الشارع، رقم المبنى، أقرب معلم" required></textarea></div>
+          <div class="field"><label for="email">البريد الإلكتروني <span class="opt"></span></label><input id="email" name="email" type="email" dir="ltr" autocomplete="email" required></div>
+          <div class="field"><label for="national">العنوان الوطني المختصر <span class="opt">(4 حروف إنجليزية و4 أرقام)</span></label><input id="national" name="national" dir="ltr" maxlength="8" placeholder="مثال: ABCD1234" autocomplete="off" required></div>
+          <div class="field"><label for="notes">ملاحظات <span class="opt">(اختياري)</span></label><textarea id="notes" name="notes"></textarea></div>
+          <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+          <div class="bank">
+            <strong>طريقة الدفع: تحويل بنكي</strong>
+            <p style="margin:6px 0 0">بعد إتمام الطلب ستظهر لك بيانات الحساب ورقم الطلب لتحويل المبلغ، واحتفظ بلقطة شاشة للدفع وارفعها من صفحة الطلب، وتابع حالة طلبك من الموقع حتى يتم التأكيد.. يتم شحن الطلب بعد التأكد من وصول المبلغ.</p>
+          </div>
+          <div id="form-error"></div>
+          <button class="btn btn-primary" id="submit-btn" style="width:100%" type="submit">إتمام الطلب</button>
+        </form>
+      </section>
+
+      <!-- الشمال: الفاتورة -->
+      <aside class="card invoice">
+        <h2>فاتورة الطلب</h2>
+        <div id="invoice-body"></div>
+      </aside>
+
+    </div>
+  </div>
+</main>
+
+<footer id="site-footer"></footer>
+<script src="js/config.js"></script>
+<script src="js/emails.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
