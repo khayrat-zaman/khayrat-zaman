@@ -21,16 +21,18 @@
         <form id="order-form" novalidate>
           <div class="field"><label for="name">الاسم بالكامل</label><input id="name" name="name" autocomplete="name" required></div>
           <div class="field"><label for="phone">رقم التليفون</label><input id="phone" name="phone" type="tel" dir="ltr" autocomplete="tel" placeholder="05xxxxxxxx" required></div>
+          <div class="field"><label for="city">المدينة</label><select id="city" name="city" required><option value="">اختر المدينة</option></select></div>
           <div class="field"><label for="address">العنوان بالتفصيل</label><textarea id="address" name="address" autocomplete="street-address" placeholder="المدينة، الحي، الشارع، رقم المبنى، أقرب معلم" required></textarea></div>
-          <div class="field"><label for="email">البريد الإلكتروني <span class="opt"></span></label><input id="email" name="email" type="email" dir="ltr" autocomplete="email" required></div>
+          <div class="field"><label for="email">البريد الإلكتروني <span class="opt">(للتواصل معك بخصوص الطلب)</span></label><input id="email" name="email" type="email" dir="ltr" autocomplete="email" required></div>
           <div class="field"><label for="national">العنوان الوطني المختصر <span class="opt">(4 حروف إنجليزية و4 أرقام)</span></label><input id="national" name="national" dir="ltr" maxlength="8" placeholder="مثال: ABCD1234" autocomplete="off" required></div>
           <div class="field"><label for="notes">ملاحظات <span class="opt">(اختياري)</span></label><textarea id="notes" name="notes"></textarea></div>
           <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
 
           <div class="bank">
-            <strong>طريقة الدفع: تحويل بنكي</strong>
-            <p style="margin:6px 0 0">بعد إتمام الطلب ستظهر لك بيانات الحساب ورقم الطلب لتحويل المبلغ، واحتفظ بلقطة شاشة للدفع وارفعها من صفحة الطلب، وتابع حالة طلبك من الموقع حتى يتم التأكيد.. يتم شحن الطلب بعد التأكد من وصول المبلغ.</p>
+            <strong>طريقة الدفع: حوّل على حسابنا</strong>
+            <p style="margin:6px 0 0">بعد إتمام الطلب ستظهر لك بيانات الحساب ورقم الطلب، فحوّل المبلغ على حسابنا بالطريقة التي تناسبك. احتفظ بلقطة شاشة للدفع وارفعها من صفحة الطلب، وتابع حالة طلبك من الموقع حتى يتم التأكيد. يتم شحن الطلب بعد التأكد من وصول المبلغ.</p>
           </div>
+          <p style="margin:10px 0;font-size:.92rem;color:var(--muted)">بإتمام الطلب أنت توافق على <a href="policies.html#terms" target="_blank">الشروط والأحكام</a> و<a href="policies.html#privacy" target="_blank">سياسة الخصوصية</a> و<a href="policies.html#returns" target="_blank">سياسة الاسترجاع</a>.</p>
           <div id="form-error"></div>
           <button class="btn btn-primary" id="submit-btn" style="width:100%" type="submit">إتمام الطلب</button>
         </form>

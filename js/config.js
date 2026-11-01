@@ -12,9 +12,13 @@ window.KZ_CONFIG = {
     { id: "1000", grams: 1000, name: "سمن ماعز - 1 كيلو", price: 180 },
     { id: "500", grams: 500, name: "سمن ماعز - 500 جرام", price: 90 }
   ],
-  SHIPPING: 20, // رسوم الشحن (0 = بدون مصاريف شحن)
+  // المدن وأسعار الشحن: غيّر الاسم أو السعر من هنا (0 = شحن مجاني)
+  CITIES: [
+    { id: "rabigh", name: "رابغ", shipping: 0 },
+    { id: "other", name: "مدينة أخرى", shipping: 20 }
+  ],
 
-  /* ---------- بيانات التحويل البنكي (حساب الأستاذ أحمد) ---------- */
+  /* ---------- بيانات الحساب (حساب الأستاذ أحمد) ---------- */
   BANK: {
     holder: "احمد عبدالقادر الحلواني",
     iban: "SA8880000247608016284427"
@@ -23,20 +27,21 @@ window.KZ_CONFIG = {
   /* ---------- التواصل ---------- */
   CONTACT_EMAIL: "",       // إيميل يظهر للعملاء في الفوتر وفي الفواتير (اختياري)
   ADDRESS: "المملكة العربية السعودية",
+  COMMERCIAL_REG: "7042504154", // رقم السجل التجاري (يظهر أسفل الموقع)
 
   /* ---------- رابط الموقع بعد الرفع ---------- */
   // مهم: بدونه روابط الإيميل (زر رفع الملف) واللوجو مش هتشتغل.
   // مثال: "https://khayrat-zaman.netlify.app"
-  SITE_URL: "",
+  SITE_URL: "https://khayrat-zaman.netlify.app",
 
   /* ---------- الفواتير بالإيميل (EmailJS) ---------- */
   // الخطوات في README.md. لو سبتها فاضية، المسؤول يوصله إيميل نصي بسيط عبر Web3Forms
   // والعميل ما يوصلوش إيميل.
   EMAILJS: {
-    PUBLIC_KEY: "RtNVn6F2DSaXVxWHb",
-    SERVICE_ID: "service_zft8gb5",
-    OWNER_TEMPLATE_ID: "template_0keksse",     // قالب فاتورة المسؤول (المستلم ثابت داخل EmailJS)
-    CUSTOMER_TEMPLATE_ID: "template_idp2z9m"   // قالب فاتورة العميل (المستلم = {{to_email}})
+    PUBLIC_KEY: "ZFQsoReSPp5g8Yq5J",
+    SERVICE_ID: "service_ld2i0so",
+    OWNER_TEMPLATE_ID: "template_3fw51y6",     // قالب فاتورة المسؤول (المستلم ثابت داخل EmailJS)
+    CUSTOMER_TEMPLATE_ID: "template_oyz3ynu"   // قالب فاتورة العميل (المستلم = {{to_email}})
   },
 
   /* ---------- رسائل العميل بالإيميل ---------- */
@@ -50,12 +55,12 @@ window.KZ_CONFIG = {
 
   /* ---------- إشعار بديل + نموذج تواصل معنا (Web3Forms) ---------- */
   // هذا المفتاح عام بطبيعته (يتحط في الصفحة) ولا يعتبر سرًا.
-  WEB3FORMS_KEY: "a5db66b5-5180-4bee-80fd-3b2fc0ab3fb1",
+  WEB3FORMS_KEY: "7fac851f-4d00-4dd4-b92b-daecfab16ece",
 
   /* ---------- الحسابات وسجل الطلبات والإيصالات (Supabase) ---------- */
   // لو سبتهم فاضيين الموقع يشتغل بوضع تجريبي (البيانات في المتصفح فقط).
-  SUPABASE_URL: "https://gqvopqwkzrxjuzdytvhe.supabase.co",
-  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdxdm9wcXdrenJ4anV6ZHl0dmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwMDI1MTUsImV4cCI6MjEwODU3ODUxNX0.G8kbsQ6RF_mtBiNUJGFiLTpMd_0SfBG6DYfV1vEXmrE",
+  SUPABASE_URL: "https://fejatigsbtyftrxfeyoq.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlamF0aWdzYnR5ZnRyeGZleW9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwMzIyODMsImV4cCI6MjEwODYwODI4M30.do_lmG8QPREGexe7k9X38Cj7q-AkwMppT3Cnh_bgk4I",
 
   /* ---------- فيديو الموشن جرافيك ---------- */
   // ضع رابط الفيديو هنا (مثال: "images/ad.mp4") وهيظهر تلقائيًا.

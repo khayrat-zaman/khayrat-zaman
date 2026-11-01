@@ -19,7 +19,7 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
     del(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } }
   };
-  const STATUS = { pending: 'في انتظار التحويل', confirmed: 'تم التأكيد', shipped: 'تم الشحن', cancelled: 'ملغي' };
+  const STATUS = { pending: 'في انتظار الدفع', confirmed: 'تم التأكيد', shipped: 'تم الشحن', cancelled: 'ملغي' };
 
   let toastTimer;
   function toast(msg) {
@@ -83,12 +83,13 @@
     add(id, q = 1) { const c = this.get(); c[id] = Math.min(20, (c[id] || 0) + q); this.set(c); },
     setQty(id, q) { const c = this.get(); if (q <= 0) delete c[id]; else c[id] = Math.min(20, q); this.set(c); },
     clear() { this.set({}); },
-    totals() {
+    totals(cityId) {
       const c = this.get();
       const lines = C.PRODUCTS.filter((p) => c[p.id]).map((p) => ({ id: p.id, name: p.name, grams: p.grams, price: p.price, qty: c[p.id] }));
       const subtotal = lines.reduce((s, l) => s + l.price * l.qty, 0);
-      const shipping = lines.length ? C.SHIPPING : 0;
-      return { lines, subtotal, shipping, total: subtotal + shipping };
+      const city = (C.CITIES || []).find((x) => x.id === cityId) || null;
+      const shipping = lines.length && city ? Number(city.shipping) || 0 : 0;
+      return { lines, subtotal, shipping, city, total: subtotal + shipping };
     },
     count() { return Object.values(this.get()).reduce((a, b) => a + b, 0); }
   };
@@ -245,15 +246,15 @@
     const items = o.items.map((i, n) => (n + 1) + ') ' + i.name + '\n    ' + i.qty + ' × ' + i.price + cur + '  =  ' + (i.price * i.qty) + cur).join('\n');
     return [
       BIG, '🧾 فاتورة طلب جديد — ' + C.STORE_NAME, BIG,
-      'رقم الطلب: ' + o.id, 'التاريخ: ' + fmtDate(o.created_at), 'الحالة: ⏳ في انتظار التحويل', '',
+      'رقم الطلب: ' + o.id, 'التاريخ: ' + fmtDate(o.created_at), 'الحالة: ⏳ في انتظار الدفع', '',
       '👤 بيانات العميل', THIN,
-      'الاسم: ' + o.customer.name, 'الهاتف: ' + o.customer.phone, 'العنوان: ' + o.customer.address, (o.customer.national ? 'العنوان الوطني: ' + o.customer.national : null),
+      'الاسم: ' + o.customer.name, 'الهاتف: ' + o.customer.phone, 'المدينة: ' + (o.customer.city || '-'), 'العنوان: ' + o.customer.address, (o.customer.national ? 'العنوان الوطني: ' + o.customer.national : null),
       'البريد: ' + (o.customer.email || 'غير مذكور'),
       (o.customer.notes ? 'ملاحظات: ' + o.customer.notes : null), '',
       '📦 المنتجات', THIN, items, THIN,
-      'المجموع: ' + o.subtotal + cur, 'الشحن: ' + (o.shipping ? o.shipping + cur : 'تحدده شركة الشحن مع العميل'),
+      'المجموع: ' + o.subtotal + cur, 'الشحن: ' + (o.shipping ? o.shipping + cur : 'مجاني'),
       '💰 الإجمالي المطلوب: ' + o.total + cur, BIG, '',
-      '✅ للمسؤول: طابق المبلغ ' + o.total + cur + ' ورقم الطلب ' + o.id + ' مع التحويل البنكي، ثم أكد الطلب من لوحة الإدارة (admin.html) قبل الشحن.'
+      '✅ للمسؤول: طابق المبلغ ' + o.total + cur + ' ورقم الطلب ' + o.id + ' مع الحساب، ثم أكد الطلب من لوحة الإدارة (admin.html) قبل الشحن.'
     ].filter((x) => x !== null).join('\n');
   }
 
@@ -262,15 +263,15 @@
     const E = EM(); const link = E && E.siteReady() ? E.uploadUrl(o) : '(الرابط يظهر بعد رفع الموقع واكتابة SITE_URL)';
     return ['ارفع ملف الدفع لتأكيد طلبك', '', 'رقم طلبك: ' + o.id, 'المبلغ: ' + o.total + cur, '',
       'حوّل المبلغ على الحساب التالي، واحتفظ بفاتورة (لقطة شاشة) الدفع، ثم ارفعها من الرابط ليتم تأكيد الطلب:',
-      'اسم المستفيد: ' + C.BANK.holder, 'الآيبان: ' + C.BANK.iban, 'اكتب رقم الطلب في ملاحظة التحويل.', '',
+      'اسم المستفيد: ' + C.BANK.holder, 'الآيبان: ' + C.BANK.iban, 'اكتب رقم الطلب في ملاحظة الدفع.', '',
       'ارفع الملف: ' + link].join('\n');
   }
   function confirmedEmailText(o) {
     const cur = ' ' + C.CURRENCY;
     const items = o.items.map((i, n) => (n + 1) + ') ' + i.name + ' × ' + i.qty + ' = ' + (i.price * i.qty) + cur).join('\n');
     return ['شكرًا لزيارتك موقعنا 🌿', 'تم تأكيد طلبك وهو قيد التحضير ✅', '', 'رقم الطلب: ' + o.id, '',
-      '📦 الطلب', items, 'الشحن: تحدده شركة الشحن مع العميل', '💰 الإجمالي: ' + o.total + cur, '',
-      'تم استلام مبلغك. ستتواصل معك شركة الشحن لتحديد رسوم الشحن قبل التوصيل.'].join('\n');
+      '📦 الطلب', items, 'الشحن: ' + (o.shipping ? o.shipping + cur : 'مجاني'), '💰 الإجمالي: ' + o.total + cur, '',
+      'تم استلام مبلغك وطلبك قيد التحضير.'].join('\n');
   }
   async function sendConfirmedToCustomer(o) {
     const em = EM(); const email = o.customer && o.customer.email;
@@ -323,11 +324,11 @@
       f.innerHTML =
         '<div class="container"><div class="foot">' +
         '<div><h3>' + esc(C.STORE_NAME) + '</h3><p>' + esc(C.TAGLINE) + '</p></div>' +
-        '<div><h3>روابط</h3><ul>' + nav.map((n) => '<li><a href="' + n[0] + '">' + n[1] + '</a></li>').join('') + '<li><a href="account.html">حسابي</a></li></ul></div>' +
+        '<div><h3>روابط</h3><ul>' + nav.map((n) => '<li><a href="' + n[0] + '">' + n[1] + '</a></li>').join('') + '<li><a href="account.html">حسابي</a></li><li><a href="policies.html#privacy">سياسة الخصوصية</a></li><li><a href="policies.html#returns">الاسترجاع والاستبدال</a></li><li><a href="policies.html#terms">الشروط والأحكام</a></li></ul></div>' +
         '<div><h3>تواصل</h3><ul><li><a href="contact.html">راسلنا من هنا</a></li>' +
         (C.CONTACT_EMAIL ? '<li><a href="mailto:' + esc(C.CONTACT_EMAIL) + '">' + esc(C.CONTACT_EMAIL) + '</a></li>' : '') +
         '<li>' + esc(C.ADDRESS) + '</li></ul></div>' +
-        '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(C.STORE_NAME) + ' - جميع الحقوق محفوظة</div></div>';
+        '</div><div class="copy">© ' + new Date().getFullYear() + ' ' + esc(C.STORE_NAME) + ' - جميع الحقوق محفوظة' + (C.COMMERCIAL_REG ? '<br>السجل التجاري: <span dir="ltr">' + esc(C.COMMERCIAL_REG) + '</span>' : '') + '</div></div>';
     }
     updateBadge();
   }
@@ -350,6 +351,7 @@
       grid.innerHTML = C.PRODUCTS.map((p) =>
         '<article class="card product"><div class="jar ' + (p.grams >= 1000 ? 'big' : 'small') + '"><img src="images/product.png" alt="' + esc(p.name) + '" loading="lazy"><span class="wtag"><i></i>' + (p.grams >= 1000 ? '1 كيلو' : p.grams + ' جرام') + '</span></div>' +
         '<h3>' + esc(p.name) + '</h3><p class="weight">الوزن: ' + (p.grams >= 1000 ? '1 كيلو' : p.grams + ' جرام') + '</p>' +
+        '<p class="weight">' + (p.grams >= 1000 ? 'الحجم الوافي (1 كيلو): حجم البركة التوفيري للاستخدام اليومي المستمر في مطبخك.' : 'الحجم التجريبي (نصف كيلو): خيارك المثالي لتذوق النكهة واختبار الجودة بنفسك.') + '</p>' +
         '<p class="price">' + fmt(p.price) + '</p>' +
         '<div class="row"><button class="btn btn-outline" data-add="' + p.id + '">أضف للسلة</button>' +
         '<a class="btn btn-primary" href="buy.html?add=' + p.id + '">اشتري الآن</a></div></article>').join('');
@@ -377,7 +379,7 @@
     let submitting = false;
 
     function renderInvoice() {
-      const t = Cart.totals();
+      const t = Cart.totals(form.city ? form.city.value : '');
       if (!t.lines.length) {
         invBox.innerHTML = '<div class="empty"><p>السلة فارغة</p><a class="btn btn-primary" href="index.html#products">تصفح المنتج</a></div>';
         $('#submit-btn').disabled = true; return;
@@ -389,7 +391,7 @@
           '<div class="qty"><button type="button" data-q="' + l.id + '" data-d="1" aria-label="زيادة">+</button><span>' + l.qty + '</span><button type="button" data-q="' + l.id + '" data-d="-1" aria-label="نقصان">−</button></div>' +
           '<strong>' + fmt(l.price * l.qty) + '</strong></div>').join('') +
         '<div class="inv-sum"><div class="r"><span>المجموع</span><span>' + fmt(t.subtotal) + '</span></div>' +
-        '<div class="r"><span>الشحن</span><span>' + (t.shipping ? fmt(t.shipping) : 'تحدده شركة الشحن مع العميل') + '</span></div>' +
+        '<div class="r"><span>الشحن</span><span>' + (!t.city ? 'اختر المدينة' : t.shipping ? fmt(t.shipping) : 'مجاني') + '</span></div>' +
         '<div class="r total"><span>الإجمالي</span><span>' + fmt(t.total) + '</span></div></div>';
     }
     invBox.addEventListener('click', (e) => {
@@ -397,6 +399,10 @@
       const cur = Cart.get()[b.dataset.q] || 0;
       Cart.setQty(b.dataset.q, cur + Number(b.dataset.d)); renderInvoice();
     });
+    if (form.city) {
+      (C.CITIES || []).forEach((c) => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.name; form.city.appendChild(o); });
+      form.city.addEventListener('change', renderInvoice);
+    }
     renderInvoice();
 
     // prefill from account
@@ -407,14 +413,16 @@
       if (submitting) return;
       errBox.innerHTML = '';
       if (form.website && form.website.value) return; // honeypot
-      const t = Cart.totals();
+      const t = Cart.totals(form.city ? form.city.value : '');
       if (!t.lines.length) { errBox.innerHTML = '<div class="msg err">السلة فارغة</div>'; return; }
       const customer = {
         name: form.name.value.trim(), phone: form.phone.value.trim(),
+        city: t.city ? t.city.name : '',
         address: form.address.value.trim(), national: (form.national ? form.national.value.trim().toUpperCase().replace(/\s+/g, '') : ''), email: form.email.value.trim(), notes: form.notes.value.trim()
       };
       const problems = [];
       if (customer.name.length < 3) problems.push('اكتب الاسم بالكامل');
+      if (!t.city) problems.push('اختر المدينة');
       if (!/^\+?[0-9\s-]{8,16}$/.test(customer.phone)) problems.push('رقم التليفون غير صحيح');
       if (customer.address.length < 10) problems.push('اكتب العنوان بالتفصيل (المدينة، الحي، الشارع، رقم المبنى)');
       if (!/^[A-Z]{4}[0-9]{4}$/.test(customer.national)) problems.push('اكتب العنوان الوطني المختصر: 4 حروف إنجليزية و4 أرقام، مثل ABCD1234');
@@ -468,11 +476,11 @@
       let how;
       if (sent.customer === 'sent') how = 'أرسلنا لك رسالة على بريدك <span dir="ltr">' + esc(o.customer.email) + '</span> فيها رقم طلبك وزر <strong>ارفع الملف</strong>، ارفع منها لقطة شاشة الدفع ليتم تأكيد طلبك.';
       else if (sent.customer === 'failed') how = 'تعذر إرسال الرسالة على بريدك، لكن طلبك محفوظ. ارفع لقطة شاشة الدفع من الزر التالي ليتم تأكيد طلبك.';
-      else how = 'بعد التحويل ارفع لقطة شاشة الدفع من الزر التالي ليتم تأكيد طلبك. تابع حالة طلبك من صفحة الرفع (يظهر فيها "تم التأكيد" عند اعتماده) أو من <a href="account.html">حسابي</a>.';
+      else how = 'بعد الدفع ارفع لقطة شاشة الدفع من الزر التالي ليتم تأكيد طلبك. تابع حالة طلبك من صفحة الرفع (يظهر فيها "تم التأكيد" عند اعتماده) أو من <a href="account.html">حسابي</a>.';
       main.innerHTML =
         '<div class="card narrow" style="text-align:center">' +
         '<h2>تم استلام طلبك ✅</h2><p>رقم طلبك:</p><div class="oid">' + esc(o.id) + '</div>' +
-        '<p style="margin-top:14px">لإتمام الطلب حوّل مبلغ <strong>' + fmt(o.total) + '</strong> على الحساب التالي، واكتب <strong>رقم الطلب</strong> في ملاحظة التحويل:</p>' +
+        '<p style="margin-top:14px">لإتمام الطلب حوّل مبلغ <strong>' + fmt(o.total) + '</strong> على حسابنا التالي، واكتب <strong>رقم الطلب</strong> في ملاحظة الدفع:</p>' +
         '<div class="bank">' +
         '<div class="row"><span>اسم المستفيد</span><span class="val ar">' + esc(C.BANK.holder) + '</span></div>' +
         '<div class="row"><span>الآيبان</span><span class="val">' + esc(C.BANK.iban) + '</span></div>' +
@@ -501,15 +509,15 @@
         (o.status !== 'confirmed' ? '<button class="btn btn-green btn-sm" data-id="' + esc(o.id) + '" data-st="confirmed">تم استلام المبلغ - تأكيد</button>' : '') +
         (o.status === 'confirmed' ? '<button class="btn btn-outline btn-sm" data-id="' + esc(o.id) + '" data-st="shipped">تم الشحن</button>' : '') +
         (o.status !== 'cancelled' && o.status !== 'shipped' ? '<button class="btn btn-outline btn-sm" data-id="' + esc(o.id) + '" data-st="cancelled">إلغاء</button>' : '') +
-        (o.status !== 'pending' ? '<button class="btn btn-outline btn-sm" data-id="' + esc(o.id) + '" data-st="pending">إرجاع لانتظار التحويل</button>' : '') +
+        (o.status !== 'pending' ? '<button class="btn btn-outline btn-sm" data-id="' + esc(o.id) + '" data-st="pending">إرجاع لانتظار الدفع</button>' : '') +
         '</div>' : '';
     const rcPill = hasRc ? ' <span class="pill confirmed">📎 إيصال مرفوع</span>' : (admin && o.status === 'pending' ? ' <span class="pill pending">بدون إيصال</span>' : '');
     return '<article class="card order"><div class="top"><span class="id">' + esc(o.id) + '</span>' +
       '<span><span class="pill ' + esc(o.status) + '">' + esc(STATUS[o.status] || o.status) + '</span>' + rcPill + '</span></div>' +
       '<div class="meta">' + esc(fmtDate(o.created_at)) + '</div>' +
       '<ul>' + (o.items || []).map((i) => '<li>' + esc(i.name) + ' × ' + esc(i.qty) + '</li>').join('') + '</ul>' +
-      '<div><strong>الإجمالي: ' + fmt(o.total) + '</strong> <span class="meta">(' + (o.shipping ? 'شحن ' + fmt(o.shipping) : 'الشحن تحدده شركة الشحن') + ')</span></div>' +
-      (admin ? '<div class="cust"><b>العميل:</b> ' + esc(c.name) + ' · <b>هاتف:</b> <span dir="ltr">' + esc(c.phone) + '</span><br><b>العنوان:</b> ' + esc(c.address) + (c.national ? '<br><b>العنوان الوطني:</b> <span dir="ltr">' + esc(c.national) + '</span>' : '') +
+      '<div><strong>الإجمالي: ' + fmt(o.total) + '</strong> <span class="meta">(' + (o.shipping ? 'شحن ' + fmt(o.shipping) : 'شحن مجاني') + ')</span></div>' +
+      (admin ? '<div class="cust"><b>العميل:</b> ' + esc(c.name) + ' · <b>هاتف:</b> <span dir="ltr">' + esc(c.phone) + '</span><br><b>المدينة:</b> ' + esc(c.city || '-') + '<br><b>العنوان:</b> ' + esc(c.address) + (c.national ? '<br><b>العنوان الوطني:</b> <span dir="ltr">' + esc(c.national) + '</span>' : '') +
         (c.email ? '<br><b>البريد:</b> <span dir="ltr">' + esc(c.email) + '</span>' : '') + (c.notes ? '<br><b>ملاحظات:</b> ' + esc(c.notes) : '') + '</div>' : '') +
       acts +
       (!admin && o.upload_token && !hasRc && o.status === 'pending'

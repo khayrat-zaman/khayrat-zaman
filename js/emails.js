@@ -62,6 +62,7 @@
     const c = o.customer || {};
     let r = infoRow('الاسم', esc(c.name)) +
       infoRow('رقم التليفون', `<span dir="ltr">${esc(c.phone)}</span>`) +
+      (c.city ? infoRow('المدينة', esc(c.city)) : '') +
       infoRow('العنوان', nl2br(c.address)) +
       (c.national ? infoRow('العنوان الوطني', `<span dir="ltr">${esc(c.national)}</span>`) : '');
     if (c.email) r += infoRow('البريد الإلكتروني', `<span dir="ltr">${esc(c.email)}</span>`);
@@ -79,7 +80,7 @@
 
   function totalsBlock(o) {
     const line = (l, v) => `<tr><td style="padding:5px 0;color:${K.muted};font-size:14px;font-family:${FONT}">${l}</td><td style="padding:5px 0;text-align:left;font-size:14px;color:${K.ink};font-family:${FONT}">${v}</td></tr>`;
-    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${line('المجموع', money(o.subtotal))}${line('الشحن', o.shipping ? money(o.shipping) : 'تحدده شركة الشحن مع العميل')}</table>` +
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${line('المجموع', money(o.subtotal))}${line('الشحن', o.shipping ? money(o.shipping) : 'مجاني')}</table>` +
       `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px;background:${K.soft};border:1px solid ${K.gold};border-radius:10px"><tr>` +
       `<td style="padding:12px 14px;font-size:17px;font-weight:bold;color:${K.olive};font-family:${FONT}">الإجمالي</td>` +
       `<td style="padding:12px 14px;text-align:left;font-size:20px;font-weight:bold;color:${K.olive};font-family:${FONT}">${money(o.total)}</td></tr></table>`;
@@ -119,7 +120,7 @@
     return withPal(KO, () => wrap(
       titleRow('فاتورة طلب جديد', 'وصل طلب جديد من الموقع') +
       metaRow(o) + customerRows(o) + orderRows(o) +
-      callout(`<strong>الحالة:</strong> في انتظار تحويل المبلغ وإيصال الدفع من العميل.<br>طابق المبلغ <strong>${money(o.total)}</strong> ورقم الطلب مع التحويل البنكي قبل التأكيد والشحن.`)
+      callout(`<strong>الحالة:</strong> في انتظار دفع المبلغ وإيصال الدفع من العميل.<br>طابق المبلغ <strong>${money(o.total)}</strong> ورقم الطلب مع الحساب قبل التأكيد والشحن.`)
     ));
   }
 
@@ -148,8 +149,8 @@
       `<tr><td style="padding:22px 22px 0;font-family:${FONT};font-size:12px;color:${K.muted};text-align:right">تاريخ إنشاء الطلب: ${esc(dateText(o))}</td></tr>` +
       `<tr><td style="padding:12px 22px 0;font-family:${FONT};font-size:20px;font-weight:bold;color:${K.olive};text-align:right">أهلاً ${esc(c.name || '')} 👋</td></tr>` +
       para(paid
-        ? 'شكرًا لزيارتك موقعنا. استلمنا مبلغك وطلبك قيد التحضير، وستتواصل معك شركة الشحن لتحديد رسوم الشحن قبل التوصيل.'
-        : 'استلمنا طلبك وبدأنا تجهيزه. لإتمام الطلب حوّل المبلغ على الحساب البنكي ثم ارفع صورة الحوالة من الزر أدناه.') +
+        ? 'شكرًا لزيارتك موقعنا. استلمنا مبلغك وطلبك قيد التحضير، وسنتواصل معك لتحديد موعد التوصيل.'
+        : 'استلمنا طلبك وبدأنا تجهيزه. لإتمام الطلب حوّل المبلغ على حسابنا ثم ارفع لقطة شاشة الدفع من الزر أدناه.') +
       `<tr><td style="padding:12px 22px 0;font-family:${FONT};font-size:15px;color:${K.ink};text-align:right"><strong>حالة الطلب:</strong> <span style="color:${K.brown};font-weight:bold">${paid ? 'قيد التحضير' : 'جديد'}</span></td></tr>`;
 
     const th = (t, al) => `<td style="padding:10px 8px;background:${K.soft};font-family:${FONT};font-size:13px;color:${K.muted};text-align:${al}">${t}</td>`;
@@ -161,9 +162,9 @@
     const summary = sec('ملخص الطلب') +
       `<tr><td style="padding:0 22px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">` +
       sumRow('قيمة المنتجات', money(o.subtotal)) +
-      sumRow('الشحن', o.shipping ? money(o.shipping) : 'تحدده شركة الشحن مع العميل') +
+      sumRow('الشحن', o.shipping ? money(o.shipping) : 'مجاني') +
       sumRow('حالة الدفع', paid ? 'تم الدفع' : 'غير مدفوع', `font-weight:bold;color:${paid ? '#2f6b2a' : '#b3261e'}`) +
-      sumRow('طريقة الدفع', 'تحويل بنكي') +
+      sumRow('طريقة الدفع', 'حوّل على حسابنا') +
       `<tr><td colspan="2" style="padding:0"><div style="height:1px;background:${K.line};margin:6px 0"></div></td></tr>` +
       `<tr><td style="padding:8px 0;font-family:${FONT};font-size:17px;font-weight:bold;color:${K.ink};text-align:right">المجموع الكلي</td><td style="padding:8px 0;font-family:${FONT};font-size:19px;font-weight:bold;color:${K.olive};text-align:left">${money(o.total)}</td></tr>` +
       `</table></td></tr>`;
@@ -171,13 +172,13 @@
     let pay = '';
     if (!paid) {
       const link = siteReady() ? uploadUrl(o) : '';
-      pay = sec('بيانات التحويل البنكي') +
-        para(`اسم المستفيد: <strong>${esc(C.BANK.holder)}</strong><br>الآيبان: <strong dir="ltr">${esc(C.BANK.iban)}</strong><br>اكتب رقم الطلب <strong dir="ltr">${esc(o.id)}</strong> في ملاحظة التحويل.`) +
-        (link ? `<tr><td style="padding:18px 22px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="border:2px solid ${K.gold};border-radius:10px"><a href="${esc(link)}" style="display:block;padding:13px 10px;color:${K.olive};font-weight:bold;font-size:16px;text-decoration:none;font-family:${FONT}">رفع صورة من الحوالة البنكية</a></td></tr></table></td></tr>` +
+      pay = sec('بيانات حسابنا') +
+        para(`اسم المستفيد: <strong>${esc(C.BANK.holder)}</strong><br>الآيبان: <strong dir="ltr">${esc(C.BANK.iban)}</strong><br>اكتب رقم الطلب <strong dir="ltr">${esc(o.id)}</strong> في ملاحظة الدفع.`) +
+        (link ? `<tr><td style="padding:18px 22px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="border:2px solid ${K.gold};border-radius:10px"><a href="${esc(link)}" style="display:block;padding:13px 10px;color:${K.olive};font-weight:bold;font-size:16px;text-decoration:none;font-family:${FONT}">رفع لقطة شاشة الدفع</a></td></tr></table></td></tr>` +
           `<tr><td align="center" style="padding:8px 22px 0;font-family:${FONT};font-size:12px;color:${K.muted};line-height:1.8">لو الزر ما اشتغل انسخ الرابط في المتصفح:<br><span dir="ltr" style="word-break:break-all;color:${K.olive}">${esc(link)}</span></td></tr>` : '');
     }
 
-    const ship = sec('عنوان الشحن وطريقته') + para(nl2br(c.address || '') + (c.national ? `<br>العنوان الوطني: <span dir="ltr">${esc(c.national)}</span>` : '') + `<br><span dir="ltr">${esc(c.phone || '')}</span>`);
+    const ship = sec('عنوان الشحن وطريقته') + para((c.city ? esc(c.city) + '<br>' : '') + nl2br(c.address || '') + (c.national ? `<br>العنوان الوطني: <span dir="ltr">${esc(c.national)}</span>` : '') + `<br><span dir="ltr">${esc(c.phone || '')}</span>`);
     const notes = sec('ملاحظات') + para(c.notes ? nl2br(c.notes) : 'لا توجد ملاحظات');
 
     const foot =
@@ -192,7 +193,7 @@
       band + hello + products + summary + pay + ship + notes + foot + `</table></div>`;
   }
 
-  /* رسالة 1: تصل العميل فور الطلب (فيها زر رفع صورة الحوالة) */
+  /* رسالة 1: تصل العميل فور الطلب (فيها زر رفع صورة الدفع) */
   const uploadRequestHTML = (o) => storeInvoiceHTML(o, 'request');
   /* رسالة 2: تصل بعد رفع الإيصال وتأكيد المتجر (بدون زر رفع) */
   const customerHTML = (o) => storeInvoiceHTML(o, 'paid');
@@ -203,7 +204,7 @@
       titleRow('وصل إيصال دفع جديد 📎', 'رفع العميل صورة الدفع') +
       `<tr><td style="padding:12px 24px 0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${K.cream};border-radius:10px"><tr><td style="padding:10px 14px;font-family:${FONT}"><div style="font-size:12px;color:${K.muted}">رقم الطلب</div><div dir="ltr" style="text-align:right;font-size:17px;font-weight:bold;color:${K.olive}">${esc(o.id)}</div></td></tr></table></td></tr>` +
       infoBlock(infoRow('العميل', esc(c.name)) + infoRow('المبلغ المطلوب', money(o.total))) +
-      callout('وصلك إيصال دفع جديد لهذا الطلب. راجع الإيصال من لوحة الإدارة وطابق المبلغ مع التحويل البنكي، ثم أكّد الطلب.')
+      callout('وصلك إيصال دفع جديد لهذا الطلب. راجع الإيصال من لوحة الإدارة وطابق المبلغ مع الحساب، ثم أكّد الطلب.')
     ));
   }
 
