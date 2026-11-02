@@ -60,7 +60,7 @@ window.KZ_CONFIG = {
 
   /* ---------- الحسابات وسجل الطلبات والإيصالات (Supabase) ---------- */
   // لو سبتهم فاضيين الموقع يشتغل بوضع تجريبي (البيانات في المتصفح فقط).
-  SUPABASE_URL: "https://fejatigsbtyftrxfeyoq.supabase.co",
+  SUPABASE_URL: "https://gqvopqwkzrxjuzdytvhe.supabase.co/rest/v1/",
   SUPABASE_ANON_KEY: "sb_publishable_d2m28Yixs5Jeg-OuImXGag_ejdSExV4",
 
   /* ---------- فيديو الموشن جرافيك ---------- */
