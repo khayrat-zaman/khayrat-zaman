@@ -32,7 +32,7 @@ window.KZ_CONFIG = {
   /* ---------- رابط الموقع بعد الرفع ---------- */
   // مهم: بدونه روابط الإيميل (زر رفع الملف) واللوجو مش هتشتغل.
   // مثال: "https://khayrat-zaman.netlify.app"
-  SITE_URL: "https://khayrat-zaman.netlify.app",
+  SITE_URL: "https://khayrat-zaman.github.io/khayrat-zaman/index.html",
 
   /* ---------- الفواتير بالإيميل (EmailJS) ---------- */
   // الخطوات في README.md. لو سبتها فاضية، المسؤول يوصله إيميل نصي بسيط عبر Web3Forms
@@ -59,7 +59,7 @@ window.KZ_CONFIG = {
 
   /* ---------- الحسابات وسجل الطلبات والإيصالات (Supabase) ---------- */
   // لو سبتهم فاضيين الموقع يشتغل بوضع تجريبي (البيانات في المتصفح فقط).
-  SUPABASE_URL: "https://fejatigsbtyftrxfeyoq.supabase.co",
+  SUPABASE_URL: "https://gqvopqwkzrxjuzdytvhe.supabase.co",
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlamF0aWdzYnR5ZnRyeGZleW9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwMzIyODMsImV4cCI6MjEwODYwODI4M30.do_lmG8QPREGexe7k9X38Cj7q-AkwMppT3Cnh_bgk4I",
 
   /* ---------- فيديو الموشن جرافيك ---------- */
