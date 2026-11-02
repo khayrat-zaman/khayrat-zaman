@@ -61,7 +61,7 @@ window.KZ_CONFIG = {
   /* ---------- الحسابات وسجل الطلبات والإيصالات (Supabase) ---------- */
   // لو سبتهم فاضيين الموقع يشتغل بوضع تجريبي (البيانات في المتصفح فقط).
   SUPABASE_URL: "https://gqvopqwkzrxjuzdytvhe.supabase.co",
-  SUPABASE_ANON_KEY: "sb_publishable_d2m28Yixs5Jeg-OuImXGag_ejdSExV4",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdxdm9wcXdrenJ4anV6ZHl0dmhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwMDI1MTUsImV4cCI6MjEwODU3ODUxNX0.G8kbsQ6RF_mtBiNUJGFiLTpMd_0SfBG6DYfV1vEXmrE",
 
   /* ---------- فيديو الموشن جرافيك ---------- */
   // ضع رابط الفيديو هنا (مثال: "images/ad.mp4") وهيظهر تلقائيًا.
