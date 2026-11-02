@@ -33,7 +33,7 @@ window.KZ_CONFIG = {
   /* ---------- رابط الموقع بعد الرفع ---------- */
   // مهم: بدونه روابط الإيميل (زر رفع الملف) واللوجو مش هتشتغل.
   // مثال: "https://khayrat-zaman.netlify.app"
-  SITE_URL: "https://khayrat-zaman.netlify.app",
+  SITE_URL: "https://khayrat-zaman.github.io/khayrat-zaman/index.html",
 
   /* ---------- الفواتير بالإيميل (EmailJS) ---------- */
   // الخطوات في README.md. لو سبتها فاضية، المسؤول يوصله إيميل نصي بسيط عبر Web3Forms
