@@ -470,6 +470,28 @@
       } finally { submitting = false; }
     });
 
+    function waBlock(o) {
+      const num = String(C.WHATSAPP || '').replace(/[^0-9]/g, '');
+      if (!num) return '';
+      const c = o.customer || {};
+      const items = (o.items || []).map((i, n) => (n + 1) + ') ' + i.name + ' × ' + i.qty).join('\n');
+      const msg = [
+        'السلام عليكم، أرغب بإتمام الدفع بطريقة أخرى لطلبي في ' + C.STORE_NAME + '.', '',
+        'رقم الطلب: ' + o.id, 'الطلب:', items,
+        'الإجمالي: ' + o.total + ' ' + C.CURRENCY, '',
+        'الاسم: ' + c.name, 'الجوال: ' + c.phone, 'المدينة: ' + (c.city || '-'), 'العنوان: ' + c.address,
+        (c.national ? 'العنوان الوطني: ' + c.national : null),
+        (c.notes ? 'ملاحظات: ' + c.notes : null)
+      ].filter((x) => x !== null).join('\n');
+      const url = 'https://wa.me/' + num + '?text=' + encodeURIComponent(msg);
+      const icon = '<svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true" style="flex:none"><path fill="#fff" d="M16.04 3C9.4 3 4 8.4 4 15.03c0 2.12.55 4.19 1.6 6.01L4 29l8.17-1.57a12 12 0 0 0 3.87.64C22.67 28.07 28 22.67 28 16.04 28 9.4 22.67 3 16.04 3zm0 22.04c-1.2 0-2.37-.2-3.48-.6l-.5-.18-4.85.93.97-4.72-.2-.5a9.98 9.98 0 0 1-1.6-5.4c0-5.5 4.5-9.97 10.04-9.97 5.5 0 9.96 4.47 9.96 9.97 0 5.5-4.46 10.47-9.96 10.47zm5.5-7.46c-.3-.15-1.78-.88-2.06-.98-.28-.1-.48-.15-.68.15-.2.3-.78.98-.96 1.18-.17.2-.35.23-.65.08-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.78-1.67-2.08-.18-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.68-1.65-.93-2.25-.25-.58-.5-.5-.68-.5h-.58c-.2 0-.53.08-.8.38-.28.3-1.05 1.03-1.05 2.5s1.08 2.9 1.23 3.1c.15.2 2.1 3.2 5.08 4.5.7.3 1.26.48 1.7.62.72.23 1.37.2 1.88.12.58-.08 1.78-.73 2.03-1.43.25-.7.25-1.3.18-1.43-.08-.13-.28-.2-.58-.35z"/></svg>';
+      return '<div style="margin:18px 0;padding:16px;border:2px solid #25D366;border-radius:14px;background:rgba(37,211,102,.08);text-align:center">' +
+        '<p style="margin:0 0 12px;font-weight:700">لا تستطيع الدفع بالتحويل على حسابنا؟</p>' +
+        '<p style="margin:0 0 14px">تواصل معنا عبر واتساب وسنساعدك. ستصلنا رسالة جاهزة فيها بياناتك وطلبك.</p>' +
+        '<a href="' + esc(url) + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;gap:12px;background:#25D366;color:#fff;font-weight:800;font-size:1.15rem;padding:14px 26px;border-radius:50px;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.2)">' + icon + '<span>تواصل معنا عبر واتساب</span></a>' +
+        '<p style="margin:12px 0 0;font-size:.95rem" dir="ltr">+' + esc(num.replace(/^(\d{3})(\d{2})(\d{3})(\d{4})$/, '$1 $2 $3 $4')) + '</p></div>';
+    }
+
     function showSuccess(o, sent) {
       const main = $('#buy-main');
       const upLink = 'upload.html?o=' + encodeURIComponent(o.id) + '&t=' + encodeURIComponent(o.upload_token);
@@ -488,6 +510,7 @@
         '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">' +
         '<button class="btn btn-outline btn-sm" id="cp-iban">نسخ الآيبان</button>' +
         '<button class="btn btn-outline btn-sm" id="cp-id">نسخ رقم الطلب</button></div>' +
+        waBlock(o) +
         '<div class="msg info" style="text-align:right;margin-top:16px">📸 <strong>احتفظ بفاتورة (لقطة شاشة) عملية الدفع.</strong><br>' + how + '<br>🔖 احفظ رابط صفحة الرفع (أضفها للمفضلة) لتتابع حالة طلبك وتعرف متى يتم تأكيده.</div>' +
         '<a class="btn btn-primary" href="' + esc(upLink) + '">ارفع إيصال الدفع</a>' +
         (sent.owner === 'failed' ? '<div class="msg err">تم حفظ طلبك، لكن تعذر إشعار المتجر بالبريد تلقائيًا. احتفظ برقم الطلب وارفع الإيصال من الزر أعلاه.</div>' : '') +

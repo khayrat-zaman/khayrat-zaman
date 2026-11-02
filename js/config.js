@@ -27,12 +27,13 @@ window.KZ_CONFIG = {
   /* ---------- التواصل ---------- */
   CONTACT_EMAIL: "",       // إيميل يظهر للعملاء في الفوتر وفي الفواتير (اختياري)
   ADDRESS: "المملكة العربية السعودية",
+  WHATSAPP: "966558815131", // رقم واتساب للتواصل (بصيغة دولية بدون +)
   COMMERCIAL_REG: "7042504154", // رقم السجل التجاري (يظهر أسفل الموقع)
 
   /* ---------- رابط الموقع بعد الرفع ---------- */
   // مهم: بدونه روابط الإيميل (زر رفع الملف) واللوجو مش هتشتغل.
   // مثال: "https://khayrat-zaman.netlify.app"
-  SITE_URL: "https://khayrat-zaman.github.io/khayrat-zaman/index.html",
+  SITE_URL: "https://khayrat-zaman.netlify.app",
 
   /* ---------- الفواتير بالإيميل (EmailJS) ---------- */
   // الخطوات في README.md. لو سبتها فاضية، المسؤول يوصله إيميل نصي بسيط عبر Web3Forms
@@ -59,8 +60,8 @@ window.KZ_CONFIG = {
 
   /* ---------- الحسابات وسجل الطلبات والإيصالات (Supabase) ---------- */
   // لو سبتهم فاضيين الموقع يشتغل بوضع تجريبي (البيانات في المتصفح فقط).
-  SUPABASE_URL: "https://gqvopqwkzrxjuzdytvhe.supabase.co",
-  SUPABASE_ANON_KEY: "sb_publishable_d2m28Yixs5Jeg-OuImXGag_ejdSExV4",
+  SUPABASE_URL: "https://fejatigsbtyftrxfeyoq.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlamF0aWdzYnR5ZnRyeGZleW9xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMwMzIyODMsImV4cCI6MjEwODYwODI4M30.do_lmG8QPREGexe7k9X38Cj7q-AkwMppT3Cnh_bgk4I",
 
   /* ---------- فيديو الموشن جرافيك ---------- */
   // ضع رابط الفيديو هنا (مثال: "images/ad.mp4") وهيظهر تلقائيًا.
